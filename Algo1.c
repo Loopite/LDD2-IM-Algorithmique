@@ -116,7 +116,8 @@ long fact(int n , int v )   // numéro de version
 float Efloat () { 
   float sum = 1;
   float fact = 1;
-  for (int i=1 ; i <= 100000 ; i++) {
+
+  for (int i=1 ; i <= 100 ; i++) {
     fact = fact * i;
     sum = sum + (1. / fact);
   }
@@ -126,7 +127,7 @@ float Efloat () {
 double Edouble () {
   double sum = 1;
   double fact = 1;
-  for (int i=1 ; i <= 100000 ; i++) {
+  for (int i=1 ; i <= 100 ; i++) {
     fact = fact * i;
     sum = sum + (1. / fact);
   }
@@ -136,7 +137,7 @@ double Edouble () {
 long double Elongdouble () { 
   long double sum = 1;
   long double fact = 1;
-  for (int i=1 ; i <= 100000 ; i++) {
+  for (int i=1 ; i <= 100 ; i++) {
     fact = fact * i;
     sum = sum + (1. / fact);
   }
