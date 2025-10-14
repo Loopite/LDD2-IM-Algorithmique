@@ -192,23 +192,56 @@ void afficheYlongdouble(unsigned int n) {
 
 // QUESTION 3 --- Suite de Syracuse
 
-/**********************/
-
 #define CSyr 2025
 
-/**********************/
+// Version 1
+int SyracuseI(int n) {
+  int Syr = CSyr ;
+  for (int i = 0 ; i < n ; i++) {
+    if (Syr % 2 == 0) Syr = Syr / 2 ;
+    else Syr = 3*Syr + 1 ;
+  }
+  return Syr ;
+}
 
-/*************************************************/
+// Version 2
+int Syracuse_SF_aux(int Syr, int iter) {
+  if (iter == 0) return Syr ;
+  else if (Syr % 2 == 0) return Syracuse_SF_aux(Syr / 2, iter - 1) ;
+  else return Syracuse_SF_aux(3 * Syr + 1, iter - 1) ;
+}
 
-int SyracuseI(int n) { return 0; }
+int SyracuseSF(int n) {
+  return Syracuse_SF_aux(CSyr, n) ;
+  }
 
-/*************************************************/
+// Version 3
 
-int SyracuseSF(int n) { return 0; }
+int Syracuse_SP_aux(int *Syr, int iter) {
+  if (iter == 0) return *Syr ;
 
-/*************************************************/
+  else if (*Syr % 2 == 0) {
+    *Syr = *Syr / 2 ;
+    return Syracuse_SP_aux(&*Syr, iter - 1) ;
+  }
 
-int SyracuseSP(int n) { return 0; }
+  else {
+    *Syr = (3 * (*Syr)) + 1 ;
+    return Syracuse_SP_aux(&*Syr, iter - 1) ;
+  }
+}
+
+int SyracuseSP(int n) {
+  int Syr = CSyr ;
+  Syracuse_SP_aux(&Syr, n) ;
+  return Syr ;
+}
+
+
+
+
+
+
 
 /*************************************************/
 
@@ -456,7 +489,7 @@ int main() {
     // QUESTION 1
     // e = 2,7182818284 5904523536 0287471352 6624977572 4709369995
     //       9574966967 6277240766 3035354759 4571382178 5251664274
-    if (true) {
+    if (false) {
         printf(" e1 = %.20f  \n", Efloat());
         printf(" e2 = %.30lf \n", Edouble());
         printf(" e3 = %.40LF \n", Elongdouble());
@@ -469,7 +502,7 @@ int main() {
     // Pour afficheYfloat, la remontée s'effectue à partir de n=9. On conclut
     // que la précision joue un rôle important dans le calcul de la suite (Y_n)
     // qui tend mathématiquement bien vers 0 par le théorème du sandwich.
-    if (true) {
+    if (false) {
         printf("Valeurs de Y, selon float, double, longdouble :\n");
         afficheYfloat(30);
         afficheYdouble(30);
@@ -478,7 +511,7 @@ int main() {
     }
 
     // QUESTION 3
-    if (false) {  // Test de toutes les versions
+    if (true) {  // Test de toutes les versions
         for (int v = 1; v <= VersionsSyracuse; v++)  // numéro de version
         {
             printf("\n Syr %d \n", v);
