@@ -245,7 +245,14 @@ int SyracuseSP(int n) {
 
 /*************************************************/
 
-int SyracuseR(int n) { return 0; }
+int SyracuseR(int n) {
+    if (n == 0) return CSyr ;
+    else {
+        int Syr = SyracuseR(n - 1) ;
+        if (Syr % 2 == 0) return Syr / 2 ;
+        else return 3 * Syr + 1 ;
+    }
+}
 
 /*************************************************/
 
