@@ -5,6 +5,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>  // Pour utiliser le temps en tant que seed SIMPLE pour l'aléatoire.
 
 // Type Booleen
 typedef enum { false, true } bool;
@@ -124,13 +125,13 @@ long fact(int n, int v)  // numéro de version
     }
 }
 
-// ---------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-// QUESTION 1 --- Calcul de e
+/*************************************************/
+/* QUESTION 1 --- Calcul de e                    */
+/*************************************************/
 // e = 2,7182818284 5904523536 0287471352 6624977572 4709369995
 //       9574966967 6277240766 3035354759 4571382178 5251664274
 
-float Efloat() {
+float Efloat(void) {
     float sum = 1;
     float fact = 1;
 
@@ -141,7 +142,7 @@ float Efloat() {
     return sum;
 }
 
-double Edouble() {
+double Edouble(void) {
     double sum = 1;
     double fact = 1;
     for (int i = 1; i <= 100; i++) {
@@ -151,7 +152,7 @@ double Edouble() {
     return sum;
 }
 
-long double Elongdouble() {
+long double Elongdouble(void) {
     long double sum = 1;
     long double fact = 1;
     for (int i = 1; i <= 100; i++) {
@@ -161,96 +162,98 @@ long double Elongdouble() {
     return sum;
 }
 
-// -------------------------------------------------------------------------------------------------------------------------------------------------------------
+/*************************************************/
+/* QUESTION 2 --- Suite Y                        */
+/*************************************************/
 
-// QUESTION 2 -- Suite Y
-void afficheYfloat(unsigned int n) {
+void afficheYfloat(int n) {
     float currentY = Efloat() - 1.0f;
-    for (unsigned int i = 0; i != n; i++) {
+    for (int i = 0; i != n; i++) {
         printf(" y%d = %.20f\n", i, currentY);
-        currentY = (i + 1) * currentY - 1;
+        currentY = (i + 1) * currentY - 1.0f;
     }
 }
 
-void afficheYdouble(unsigned int n) {
+void afficheYdouble(int n) {
     double currentY = Edouble() - 1.0;
-    for (unsigned int i = 0; i != n; i++) {
+    for (int i = 0; i != n; i++) {
         printf(" y%d = %.30lf\n", i, currentY);
-        currentY = (i + 1) * currentY - 1;
+        currentY = (i + 1) * currentY - 1.0;
     }
 }
 
-void afficheYlongdouble(unsigned int n) {
+void afficheYlongdouble(int n) {
     long double currentY = Elongdouble() - 1.0L;
-    for (unsigned int i = 0; i != n; i++) {
+    for (int i = 0; i != n; i++) {
         printf(" y%d = %.40LF\n", i, currentY);
-        currentY = (i + 1) * currentY - 1;
+        currentY = (i + 1) * currentY - 1.0L;
     }
 }
 
-// -------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-// QUESTION 3 --- Suite de Syracuse
+/*************************************************/
+/* QUESTION 3 --- Suite de Syracuse              */
+/*************************************************/
 
 #define CSyr 2025
 
 // Version 1
 int SyracuseI(int n) {
-  int Syr = CSyr ;
-  for (int i = 0 ; i < n ; i++) {
-    if (Syr % 2 == 0) Syr = Syr / 2 ;
-    else Syr = 3*Syr + 1 ;
-  }
-  return Syr ;
+    int Syr = CSyr;
+    for (int i = 0; i < n; i++) {
+        if (Syr % 2 == 0)
+            Syr = Syr / 2;
+        else
+            Syr = 3 * Syr + 1;
+    }
+    return Syr;
 }
 
 // Version 2
 int Syracuse_SF_aux(int Syr, int iter) {
-  if (iter == 0) return Syr ;
-  else if (Syr % 2 == 0) return Syracuse_SF_aux(Syr / 2, iter - 1) ;
-  else return Syracuse_SF_aux(3 * Syr + 1, iter - 1) ;
+    if (iter == 0)
+        return Syr;
+    else if (Syr % 2 == 0)
+        return Syracuse_SF_aux(Syr / 2, iter - 1);
+    else
+        return Syracuse_SF_aux(3 * Syr + 1, iter - 1);
 }
 
-int SyracuseSF(int n) {
-  return Syracuse_SF_aux(CSyr, n) ;
-  }
+int SyracuseSF(int n) { return Syracuse_SF_aux(CSyr, n); }
 
 // Version 3
 
-int Syracuse_SP_aux(int *Syr, int iter) {
-  if (iter == 0) return *Syr ;
+int Syracuse_SP_aux(int* Syr, int iter) {
+    if (iter == 0)
+        return *Syr;
 
-  else if (*Syr % 2 == 0) {
-    *Syr = *Syr / 2 ;
-    return Syracuse_SP_aux(&*Syr, iter - 1) ;
-  }
+    else if (*Syr % 2 == 0) {
+        *Syr = *Syr / 2;
+        return Syracuse_SP_aux(&*Syr, iter - 1);
+    }
 
-  else {
-    *Syr = (3 * (*Syr)) + 1 ;
-    return Syracuse_SP_aux(&*Syr, iter - 1) ;
-  }
+    else {
+        *Syr = (3 * (*Syr)) + 1;
+        return Syracuse_SP_aux(&*Syr, iter - 1);
+    }
 }
 
 int SyracuseSP(int n) {
-  int Syr = CSyr ;
-  Syracuse_SP_aux(&Syr, n) ;
-  return Syr ;
+    int Syr = CSyr;
+    Syracuse_SP_aux(&Syr, n);
+    return Syr;
 }
-
-
-
-
-
-
 
 /*************************************************/
 
 int SyracuseR(int n) {
-    if (n == 0) return CSyr ;
+    if (n == 0)
+        return CSyr;
     else {
-        int Syr = SyracuseR(n - 1) ;
-        if (Syr % 2 == 0) return Syr / 2 ;
-        else return 3 * Syr + 1 ;
+        int Syr = SyracuseR(n - 1);
+        if (Syr % 2 == 0)
+            return Syr / 2;
+        else
+            return 3 * Syr + 1;
     }
 }
 
@@ -276,14 +279,14 @@ int Syracuse(int n, int i) {
     }
 }
 
-// -------------------------------------------------------------------------------------------------------------------------------------------------------------
+/*************************************************/
+/* QUESTION 4 --- Permutations tableaux          */
+/*************************************************/
 
-// QUESTION 4 --- Permutations tableaux
-
-int Int_Lire()  // Lecture simpliste d'un entier positif ou nul
-                // ignore les char avant le premier chiffre
-                // s'arrête en absorbant le char après le dernier chiffre
-                // exemple "truc bidule 345x" donne 345
+int Int_Lire(void)  // Lecture simpliste d'un entier positif ou nul
+                    // ignore les char avant le premier chiffre
+                    // s'arrête en absorbant le char après le dernier chiffre
+                    // exemple "truc bidule 345x" donne 345
 {
     char c;
     do c = getchar();
@@ -326,47 +329,150 @@ void P_Affiche(int* P, int n) {
 
 /*************************************************/
 
-int* P_identite(int n) { return P_Zero(n); }
+int* P_identite(int n) {
+    // malloc(n=0) renverra soit NULL soit un pointeur.
+    // L'utilisateur devra donc free obligatoirement.
+    // Même histoire pour ce qui suivra.
+    int* T = (int*)malloc(n * sizeof(int));
+    // OSEF du cas où l'allocation échoue.
+    // En effet, si l'allocation échoue, c'est déjà signe de problème sur la
+    // machine.
+
+    for (int i = 0; i < n; i++) T[i] = i;
+    return T;
+}
 
 /*************************************************/
 
-int* P_Inverse(int* P, int n) { return P_Zero(n); }
+int* P_Inverse(int* P, int n) {
+    int* T = (int*)malloc(n * sizeof(int));
+    for (int i = 0; i < n; i++) T[P[i]] = i;
+    return T;
+}
 
 /*************************************************/
 
 void P_Compose(int* P, int* Q, int* R, int n)  // écrit PoQ dans R
-{}
+{
+    for (int i = 0; i < n; i++) R[i] = P[Q[i]];
+}
 
 /*************************************************/
 
-bool P_Verifie(int* P, int n) { return true; }
+bool P_Verifie(int* P, int n) {
+    // Préparation de la vérification avec le déjà vu.
+    bool* deja_vu = (bool*)malloc(n * sizeof(bool));
+    for (int i = 0; i < n; i++) {
+        deja_vu[i] = false;
+    }
 
-/**********************/
+    // Vérification linéaire des éléments.
+    for (int i = 0; i < n; i++) {
+        if (P[i] < 0 ||
+            P[i] >=
+                n) {  // On traite le cas où on est hors intervalle [0, n-1].
+            free(deja_vu);
+            return false;
+        }
 
-int* P_power1(int* P, int n, int k)  // itératif, complexité environ k
-{
-    return P_Zero(n);
+        if (deja_vu[P[i]]) {  // Un déjà vu s'est produit.
+            free(deja_vu);
+            return false;
+        }
+
+        deja_vu[P[i]] = true;
+    }
+
+    free(deja_vu);
+    return true;
 }
 
 /**********************/
 
-int* P_power2(int* P, int n, int k)  // récursif, complexité environ k
+int* P_power1(int* P, int n, int k)  // Itératif, complexité environ k
 {
-    return P_Zero(n);
+    int* res = P_identite(n);
+    int* tmp = malloc(n * sizeof(int));
+
+    for (int i = 0; i < k; i++) {
+        P_Compose(res, P, tmp, n);
+        for (int j = 0; j < n; j++) res[j] = tmp[j];
+    }
+
+    free(tmp);
+    return res;
 }
 
 /**********************/
 
-int* P_power3(int* P, int n, int k)  // récursif, complexité environ log2(k)
+int* P_power2(int* P, int n, int k)  // Récursif, complexité environ k
 {
-    return P_Zero(n);
+    if (k == 0) return P_identite(n);
+
+    // Calcul récursif : P^k = P^(k-1) * P d'après la consigne.
+    int* res = P_power2(P, n, k - 1); // Calcul de P^(k-1)
+    int* tmp = malloc(n * sizeof(int));
+    P_Compose(res, P, tmp, n);
+
+    free(res);
+    return tmp;
 }
 
 /**********************/
 
-int* P_power4(int* P, int n, int k)  // itératif, complexité environ log2(k)
+int* P_power3(int* P, int n, int k)  // Récursif, complexité environ log2(k)
 {
-    return P_Zero(n);
+    if (k == 0) return P_identite(n);
+    if (k == 1) {
+        int* res = malloc(n * sizeof(int));
+        for (int i = 0; i < n; i++) res[i] = P[i];
+        return res;
+    }
+
+    int* half = P_power3(P, n, k / 2); // On divise par 2 pour l'effet log2.
+    int* half_squared = malloc(n * sizeof(int));
+    P_Compose(half, half, half_squared, n);
+    free(half);
+
+    if (k % 2 == 0) {
+        return half_squared;
+    } else {
+        int* result = malloc(n * sizeof(int));
+        P_Compose(P, half_squared, result, n);
+        free(half_squared);
+        return result;
+    }
+}
+
+/**********************/
+
+int* P_power4(int* P, int n, int k)  // Itératif, complexité environ log2(k)
+{
+    int* result = P_identite(n);
+    int* power = malloc(n * sizeof(int));
+    for (int i = 0; i < n; i++) power[i] = P[i];
+
+    int* tmp = malloc(n * sizeof(int));
+
+    while (k > 0) {
+        if (k % 2 == 1) {
+            P_Compose(power, result, tmp, n);
+            // Remplacer result par tmp directement
+            for (int j = 0; j < n; j++) result[j] = tmp[j];
+        }
+
+        k /= 2;
+
+        if (k > 0) {
+            P_Compose(power, power, tmp, n);
+            // Remplacer power par tmp directement
+            for (int j = 0; j < n; j++) power[j] = tmp[j];
+        }
+    }
+
+    free(power);
+    free(tmp);
+    return result;
 }
 
 /*************************************************/
@@ -398,15 +504,42 @@ int* P_power(int* P, int n, int k, int v)  // version v de 1 à VersionsPuissanc
 
 /*************************************************/
 
-int* P_random(int n) { return P_identite(n); }
+int* P_random(int n) {
+    int* T = P_identite(n);
+    // Cet algorithme porte le nom de mélange de Fisher-Yates.
+    // https://fr.wikipedia.org/wiki/Mélange_de_Fisher-Yates
+    // Pour i allant de n − 1 à 1 (inclus) faire :
+    //  j ← entier aléatoire entre 0 et i inclus
+    //  échanger a[j] et a[i]
+    for (int i = n - 1; i > 0; i--) {
+        // Générer un indice aléatoire entre 0 et i
+        int j = rand() % (i + 1);
 
-// -------------------------------------------------------------------------------------------------------------------------------------------------------------
+        // Échanger T[i] et T[j]
+        int temp = T[i];
+        T[i] = T[j];
+        T[j] = temp;
+    }
+
+    return T;
+}
+
+/*************************************************/
+
+void recursive(int depth) {
+    if (depth == 0) {
+        return;
+    }
+    recursive(depth - 1);
+}
+
+/*************************************************/
 
 // MAIN - EXECUTION
+int main(void) {
+    // Initialisation du générateur de nombres aléatoires
+    srand(time(NULL));
 
-// int main(int argc, char** argv)
-
-int main() {
     // Mettre "if true" vs "if false" selon que vous voulez les tests ou pas
 
     /************************  taille des nombres  *************************/
@@ -518,7 +651,7 @@ int main() {
     }
 
     // QUESTION 3
-    if (true) {  // Test de toutes les versions
+    if (false) {  // Test de toutes les versions
         for (int v = 1; v <= VersionsSyracuse; v++)  // numéro de version
         {
             printf("\n Syr %d \n", v);
@@ -536,7 +669,7 @@ int main() {
     }
 
     // QUESTION 4
-    if (false) {
+    if (true) {
         printf("dim des permutations ? : \n");
         int dim = Int_Lire();
 
@@ -566,7 +699,10 @@ int main() {
             P_Affiche(P_power(tmp, dim, 2, v), dim);
             P_Affiche(P_power(tmp, dim, 3, v), dim);
             P_Affiche(P_power(tmp, dim, dim, v), dim);
-            P_Affiche(P_power(tmp, dim, fact1(dim), v), dim);
+            P_Affiche(P_power(tmp, dim, fact1(dim), v), dim); // REMARQUE: peut causer des crash
+                                                              // si la dimension est trop grande. Par exemple pour dim=10,
+                                                              // il y a 10! = 3 628 800 appels récursifs. Pour dim=9 ça
+                                                              // plante aussi. Pour dim<=8 c'est ok.
         }
 
         free(tmp1);
@@ -576,5 +712,12 @@ int main() {
 
         printf("\n");
     }
+
+    // BONUS: pour tester la fameuse remarque sur les crash lié au nombre d'appels récursifs.
+    if (false) {
+        int max_depth = 362880; // 9!
+        recursive(max_depth);
+    }
+
     return 0;
 }
