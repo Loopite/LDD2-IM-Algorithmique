@@ -199,7 +199,7 @@ void afficheYlongdouble(int n) {
 // Version 1
 int SyracuseI(int n) {
     int Syr = CSyr;
-    for (int i = 0; i < n; i++) {
+    for (int i = n; i > 0; --) {
         if (Syr % 2 == 0)
             Syr = Syr / 2;
         else
