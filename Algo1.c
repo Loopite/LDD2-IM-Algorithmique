@@ -419,15 +419,12 @@ int* P_power2(int* P, int n, int k)  // Récursif, complexité environ k
 }
 
 /**********************/
-
+// pourquoi le cas spécial k==1 ? et pourquoi n'est-elle pas que `return P` ? OK.
+// un peu étrange de calculer `P_k2 = P_power3(P, n, k / 2)` premièrement et « corriger » après si k est impair: A VOIR.
 int* P_power3(int* P, int n, int k)  // Récursif, complexité environ log2(k)
 {
     if (k == 0) return P_identite(n);
-    if (k == 1) {
-        int* res = malloc(n * sizeof(int));
-        for (int i = 0; i < n; i++) res[i] = P[i];
-        return res;
-    }
+    if (k == 1) return P;
 
     int* half = P_power3(P, n, k / 2); // On divise par 2 pour l'effet log2.
     int* half_squared = malloc(n * sizeof(int));

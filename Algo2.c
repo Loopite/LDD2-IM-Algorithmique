@@ -1,10 +1,20 @@
 /*
  * Arthur PINGARD --- arthur.pingard@universite-paris-saclay.fr
  * Pierre LEANDRI --- pierre.leandri@universite-paris-saclay.fr
+ *
+ * REMARQUE:
+ * On utilise CHECK définit ci-dessous pour tester des valeurs
+ * rentrées car la 2ème partie s'y prête mieux. Les print associés
+ * sont mis en commentaires juste au-dessus du CHECK si jamais
+ * celui-ci échoue. Ainsi, vous pourrez obtenir la valeur avant que ça plante.
  */
 
-#include <stdio.h>
 #include <stdlib.h>
+#include <stdio.h>
+
+#define CHECK(test) \
+    if (!(test)) \
+        fprintf(stderr, "Test failed in file %s line %d: %s\n", __FILE__, __LINE__, #test);
 
 // Type Booleen
 typedef enum { false, true } bool;
@@ -179,29 +189,22 @@ bool UnPlusDeuxEgalTrois(Liste L) {
 
 bool PlusCourteRec(Liste L1, Liste L2) {
     if (L1 == NULL && L2 != NULL) return true;
-    if (L1 != NULL && L2 == NULL) return false;
-    if (L1 == NULL && L2 == NULL) return false;  // Même longueur
+    if (L2 == NULL) return false;
 
     return PlusCourteRec(L1->suite, L2->suite);
 }
 
 /*******/
 bool PlusCourteIter(Liste L1, Liste L2) {
-    if (L1 == NULL && L2 != NULL) return true;
-    if (L1 != NULL && L2 == NULL) return false;
-    if (L1 == NULL && L2 == NULL) return false;  // Même longueur car vide
+	while (L1 != NULL && L2 != NULL) {
+        if (L1 == NULL && L2 != NULL) return true;
+        if (L1 != NULL && L2 == NULL) return false;
 
-    Liste tmp1 = L1;
-    Liste tmp2 = L2;
-    do {
-        tmp1 = tmp1->suite;
-        tmp2 = tmp2->suite;
+        L1 = L1->suite;
+        L2 = L2->suite;
+    }
 
-        if (tmp1 == NULL && tmp2 != NULL) return true;
-        if (tmp1 != NULL && tmp2 == NULL) return false;
-    } while (tmp1 != NULL && tmp2 != NULL);
-
-    return false;  // Même longueur après "scan"
+	return L1 == NULL && L2 != NULL;
 }
 
 /********************************************/
@@ -222,15 +225,14 @@ bool VerifiekORec(Liste L, int k) {
 /*******/
 
 bool VerifiekOIter(Liste L, int k) {
-    Liste tmp1 = L;
     int compteur = 0;
-    while (tmp1 != NULL) {
-        if (tmp1->valeur == 0) {
+    while (L != NULL) {
+        if (L->valeur == 0) {
             compteur++;
             if (compteur > k) return false;
         }
 
-        tmp1 = tmp1->suite;
+        L = L->suite;
     }
 
     return compteur == k;
@@ -242,19 +244,34 @@ bool VerifiekOIter(Liste L, int k) {
 /*                                          */
 /********************************************/
 
-int NTAZ_It(Liste L) { return 0; }
+int NTAZ_It(Liste L) {
+	int compteur = 0;
+
+	while (L != NULL && L->valeur != 0) {
+		L = L->suite;
+		compteur++;
+	}
+
+	return compteur;
+}
 
 /*******/
 
-int NTAZ_Rec(Liste L) { return 0; }
+int NTAZ_Rec(Liste L) {
+
+}
 
 /*******/
 
-int NTAZ_RTSF(Liste L) { return 0; }
+int NTAZ_RTSF(Liste L) {
+
+}
 
 /*******/
 
-int NTAZ_RTSP(Liste L) { return 0; }
+int NTAZ_RTSP(Liste L) {
+
+}
 
 /********************************************/
 /*                                          */
@@ -283,38 +300,43 @@ void TueRetroPos(Liste* L) {}
 /*************************************************/
 
 int main(void) {
-    if (false) {
+    if (true) {
         Liste L1 = NULL;
         L1 = ajoute(2, L1);
         L1 = ajoute(4, L1);
         L1 = ajoute(42, L1);
         L1 = ajoute(19, L1);
         L1 = ajoute(23, L1);
-        printf("UnPlusDeuxEgalTrois(L1) = %d\n", UnPlusDeuxEgalTrois(L1));
+        //printf("UnPlusDeuxEgalTrois(L1) = %d\n", UnPlusDeuxEgalTrois(L1));
+		CHECK(UnPlusDeuxEgalTrois(L1) == 1);
 
         Liste L2 = NULL;
         L2 = ajoute(-2, L2);
         L2 = ajoute(2, L2);
-        printf("UnPlusDeuxEgalTrois(L2) = %d\n", UnPlusDeuxEgalTrois(L2));
+        //printf("UnPlusDeuxEgalTrois(L2) = %d\n", UnPlusDeuxEgalTrois(L2));
+		CHECK(UnPlusDeuxEgalTrois(L2) == 1);
 
         Liste L3 = NULL;
         L3 = ajoute(1, L3);
         L3 = ajoute(27, L3);
         L3 = ajoute(3, L3);
         L3 = ajoute(2, L3);
-        printf("UnPlusDeuxEgalTrois(L3) = %d\n", UnPlusDeuxEgalTrois(L3));
+        //printf("UnPlusDeuxEgalTrois(L3) = %d\n", UnPlusDeuxEgalTrois(L3));
+		CHECK(UnPlusDeuxEgalTrois(L3) == 0);
 
         Liste L4 = NULL;
         L4 = ajoute(2, L4);
-        printf("UnPlusDeuxEgalTrois(L4) = %d\n", UnPlusDeuxEgalTrois(L4));
+        //printf("UnPlusDeuxEgalTrois(L4) = %d\n", UnPlusDeuxEgalTrois(L4));
+		CHECK(UnPlusDeuxEgalTrois(L4) == 0);
     }
 
-    if (false) {
+    if (true) {
         {
             Liste L1 = NULL;
             Liste L2 = NULL;
-            printf("PlusCourteRec(L1, L2) = %d, PlusCourteIter(L1, L2) = %d\n",
-                   PlusCourteRec(L1, L2), PlusCourteIter(L1, L2));
+            //printf("PlusCourteRec(L1, L2) = %d, PlusCourteIter(L1, L2) = %d\n",
+            //       PlusCourteRec(L1, L2), PlusCourteIter(L1, L2));
+			CHECK(PlusCourteRec(L1, L2) == 0 && PlusCourteIter(L1, L2) == 0);
         }
 
         {
@@ -322,8 +344,9 @@ int main(void) {
             L1 = ajoute(2, L1);
 
             Liste L2 = NULL;
-            printf("PlusCourteRec(L1, L2) = %d, PlusCourteIter(L1, L2) = %d\n",
-                   PlusCourteRec(L1, L2), PlusCourteIter(L1, L2));
+            //printf("PlusCourteRec(L1, L2) = %d, PlusCourteIter(L1, L2) = %d\n",
+            //       PlusCourteRec(L1, L2), PlusCourteIter(L1, L2));
+			CHECK(PlusCourteRec(L1, L2) == 0 && PlusCourteIter(L1, L2) == 0);
         }
 
         {
@@ -331,8 +354,9 @@ int main(void) {
 
             Liste L2 = NULL;
             L2 = ajoute(2, L2);
-            printf("PlusCourteRec(L1, L2) = %d, PlusCourteIter(L1, L2) = %d\n",
-                   PlusCourteRec(L1, L2), PlusCourteIter(L1, L2));
+            //printf("PlusCourteRec(L1, L2) = %d, PlusCourteIter(L1, L2) = %d\n",
+            //       PlusCourteRec(L1, L2), PlusCourteIter(L1, L2));
+			CHECK(PlusCourteRec(L1, L2) == 1 && PlusCourteIter(L1, L2) == 1);
         }
 
         {
@@ -342,8 +366,9 @@ int main(void) {
             Liste L2 = NULL;
             L2 = ajoute(2, L2);
             L2 = ajoute(2, L2);
-            printf("PlusCourteRec(L1, L2) = %d, PlusCourteIter(L1, L2) = %d\n",
-                   PlusCourteRec(L1, L2), PlusCourteIter(L1, L2));
+            //printf("PlusCourteRec(L1, L2) = %d, PlusCourteIter(L1, L2) = %d\n",
+            //       PlusCourteRec(L1, L2), PlusCourteIter(L1, L2));
+			CHECK(PlusCourteRec(L1, L2) == 1 && PlusCourteIter(L1, L2) == 1);
         }
 
         {
@@ -355,24 +380,31 @@ int main(void) {
             L2 = ajoute(3, L2);
             L2 = ajoute(2, L2);
             L2 = ajoute(1, L2);
-            printf("PlusCourteRec(L1, L2) = %d, PlusCourteIter(L1, L2) = %d\n",
-                   PlusCourteRec(L1, L2), PlusCourteIter(L1, L2));
+            //printf("PlusCourteRec(L1, L2) = %d, PlusCourteIter(L1, L2) = %d\n",
+            //       PlusCourteRec(L1, L2), PlusCourteIter(L1, L2));
+			CHECK(PlusCourteRec(L1, L2) == 1 && PlusCourteIter(L1, L2) == 1);
         }
     }
 
-    if (false) {
+    if (true) {
         Liste L1 = NULL;
-        printf("VerifiekORec(L1, 1) = %d, VerifiekOIter(L1, 1) = %d\n",
-               VerifiekORec(L1, 1), VerifiekOIter(L1, 1));
-        printf("VerifiekORec(L1, 0) = %d, VerifiekOIter(L1, 0) = %d\n",
-               VerifiekORec(L1, 0), VerifiekOIter(L1, 0));
+        //printf("VerifiekORec(L1, 1) = %d, VerifiekOIter(L1, 1) = %d\n",
+        //       VerifiekORec(L1, 1), VerifiekOIter(L1, 1));
+		CHECK(VerifiekORec(L1, 1) == 0 && VerifiekOIter(L1, 1) == 0);
+
+        //printf("VerifiekORec(L1, 0) = %d, VerifiekOIter(L1, 0) = %d\n",
+        //       VerifiekORec(L1, 0), VerifiekOIter(L1, 0));
+		CHECK(VerifiekORec(L1, 0) == 1 && VerifiekOIter(L1, 0) == 1);
 
         Liste L2 = NULL;
         L2 = ajoute(0, L2);
-        printf("VerifiekORec(L2, 1) = %d, VerifiekOIter(L2, 1) = %d\n",
-               VerifiekORec(L2, 1), VerifiekOIter(L2, 1));
-        printf("VerifiekORec(L2, 0) = %d, VerifiekOIter(L2, 0) = %d\n",
-               VerifiekORec(L2, 0), VerifiekOIter(L2, 0));
+        //printf("VerifiekORec(L2, 1) = %d, VerifiekOIter(L2, 1) = %d\n",
+        //       VerifiekORec(L2, 1), VerifiekOIter(L2, 1));
+		CHECK(VerifiekORec(L2, 1) == 1 && VerifiekOIter(L2, 1) == 1);
+
+        //printf("VerifiekORec(L2, 0) = %d, VerifiekOIter(L2, 0) = %d\n",
+        //       VerifiekORec(L2, 0), VerifiekOIter(L2, 0));
+		CHECK(VerifiekORec(L2, 0) == 0 && VerifiekOIter(L2, 0) == 0);
 
         Liste L3 = NULL;
         L3 = ajoute(0, L3);
@@ -384,23 +416,41 @@ int main(void) {
         L3 = ajoute(0, L3);
         L3 = ajoute(0, L3);
         L3 = ajoute(2, L3);
-        printf("VerifiekORec(L3, 4) = %d, VerifiekOIter(L3, 4) = %d\n",
-               VerifiekORec(L3, 4), VerifiekOIter(L3, 4));
-        printf("VerifiekORec(L3, 3) = %d, VerifiekOIter(L3, 3) = %d\n",
-               VerifiekORec(L3, 3), VerifiekOIter(L3, 3));
-        printf("VerifiekORec(L3, 1) = %d, VerifiekOIter(L3, 1) = %d\n",
-               VerifiekORec(L3, 1), VerifiekOIter(L3, 1));
-        printf("VerifiekORec(L3, 0) = %d, VerifiekOIter(L3, 0) = %d\n",
-               VerifiekORec(L3, 0), VerifiekOIter(L3, 0));
+        //printf("VerifiekORec(L3, 4) = %d, VerifiekOIter(L3, 4) = %d\n",
+        //       VerifiekORec(L3, 4), VerifiekOIter(L3, 4));
+		CHECK(VerifiekORec(L3, 4) == 1 && VerifiekOIter(L3, 4) == 1);
+
+        //printf("VerifiekORec(L3, 3) = %d, VerifiekOIter(L3, 3) = %d\n",
+        //       VerifiekORec(L3, 3), VerifiekOIter(L3, 3));
+		CHECK(VerifiekORec(L3, 3) == 0 && VerifiekOIter(L3, 3) == 0);
+
+        //printf("VerifiekORec(L3, 1) = %d, VerifiekOIter(L3, 1) = %d\n",
+        //       VerifiekORec(L3, 1), VerifiekOIter(L3, 1));
+		CHECK(VerifiekORec(L3, 1) == 0 && VerifiekOIter(L3, 1) == 0);
+
+        //printf("VerifiekORec(L3, 0) = %d, VerifiekOIter(L3, 0) = %d\n",
+        //       VerifiekORec(L3, 0), VerifiekOIter(L3, 0));
+		CHECK(VerifiekORec(L3, 0) == 0 && VerifiekOIter(L3, 0) == 0);
     }
 
-    /*l = NULL;
-    VireDernier_rec(&l);
-    VireDernier_iter(&l);
-    affiche_rec(l);
-    affiche_iter(l);
-    printf(" %d \n", longueur_iter(l));
-    printf(" %d \n", longueur_rec(l));
-    VideListe(&l);*/
+	if (true) {
+		{
+			Liste L = NULL;
+        	L = ajoute(0, L);
+			L = ajoute(6, L);
+			L = ajoute(0, L);
+			L = ajoute(5, L);
+			L = ajoute(9, L);
+			L = ajoute(2, L);
+			L = ajoute(3, L);
+			// IL MANQUE LES 3 AUTRES ICI.
+
+			//printf("NTAZ_It(L) = %d\n", NTAZ_It(L));
+			CHECK(NTAZ_It(L) == 4);
+		}
+
+		// IL MANQUE D'AUTRES EXEMPLES.
+	}
+
     return 0;
 }
