@@ -199,7 +199,7 @@ void afficheYlongdouble(int n) {
 // Version 1
 int SyracuseI(int n) {
     int Syr = CSyr;
-    for (int i = n; i > 0; --) {
+    for (int i = n; i > 0; i--) {
         if (Syr % 2 == 0)
             Syr = Syr / 2;
         else
@@ -424,7 +424,8 @@ int* P_power2(int* P, int n, int k)  // Récursif, complexité environ k
 int* P_power3(int* P, int n, int k)  // Récursif, complexité environ log2(k)
 {
     if (k == 0) return P_identite(n);
-    if (k == 1) return P;
+    if (k == 1) return P; // Cas trivial pour aller plus vite
+                          // On pourrait l'enlever, c.f la suite du code pour k = 1.
 
     int* half = P_power3(P, n, k / 2); // On divise par 2 pour l'effet log2.
     int* half_squared = malloc(n * sizeof(int));

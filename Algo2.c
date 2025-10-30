@@ -3,10 +3,11 @@
  * Pierre LEANDRI --- pierre.leandri@universite-paris-saclay.fr
  *
  * REMARQUE:
- * On utilise CHECK définit ci-dessous pour tester des valeurs
+ * On utilise CHECK défini ci-dessous pour tester des valeurs
  * rentrées car la 2ème partie s'y prête mieux. Les print associés
- * sont mis en commentaires juste au-dessus du CHECK si jamais
- * celui-ci échoue. Ainsi, vous pourrez obtenir la valeur avant que ça plante.
+ * sont mis en commentaire juste au-dessus du CHECK si jamais
+ * celui-ci échoue. Ainsi, vous pourrez obtenir la valeur avant que ça plante
+ * juste en décommentant au niveau du print.
  */
 
 #include <stdlib.h>
@@ -258,19 +259,31 @@ int NTAZ_It(Liste L) {
 /*******/
 
 int NTAZ_Rec(Liste L) {
-
+    if (L == NULL || L->valeur == 0) return 0;
+    return 1 + NTAZ_Rec(L->suite);
 }
 
 /*******/
+int NTAZ_SF(Liste L, int compteur) {
+    if (L == NULL || L->valeur == 0) return compteur;
+    return NTAZ_SF(L->suite, compteur + 1);
+}
 
 int NTAZ_RTSF(Liste L) {
-
+    return NTAZ_SF(L, 0);
 }
 
 /*******/
+void NTAZ_SP(Liste L, int* compteur) {
+    if (L == NULL || L->valeur == 0) return;
+    (*compteur)++;
+    NTAZ_SP(L->suite, compteur);
+}
 
 int NTAZ_RTSP(Liste L) {
-
+    int compteur = 0;
+    NTAZ_SP(L, &compteur);
+    return compteur;
 }
 
 /********************************************/
@@ -279,11 +292,15 @@ int NTAZ_RTSP(Liste L) {
 /*                                          */
 /********************************************/
 
-void TuePosRec(Liste* L) {}
+void TuePosRec(Liste* L) {
+
+}
 
 /*******/
 
-void TuePosIt(Liste* L) {}
+void TuePosIt(Liste* L) {
+
+}
 
 /********************************************/
 /*                                          */
@@ -291,7 +308,9 @@ void TuePosIt(Liste* L) {}
 /*                                          */
 /********************************************/
 
-void TueRetroPos(Liste* L) {}
+void TueRetroPos(Liste* L) {
+
+}
 
 /*************************************************/
 /*                                               */
@@ -443,14 +462,59 @@ int main(void) {
 			L = ajoute(9, L);
 			L = ajoute(2, L);
 			L = ajoute(3, L);
-			// IL MANQUE LES 3 AUTRES ICI.
 
 			//printf("NTAZ_It(L) = %d\n", NTAZ_It(L));
+		    //printf("NTAZ_Rec(L) = %d\n", NTAZ_Rec(L));
+		    //printf("NTAZ_RTSF(L) = %d\n", NTAZ_RTSF(L));
+		    //printf("NTAZ_RTSP(L) = %d\n", NTAZ_RTSP(L));
 			CHECK(NTAZ_It(L) == 4);
+            CHECK(NTAZ_Rec(L) == 4);
+            CHECK(NTAZ_RTSF(L) == 4);
+            CHECK(NTAZ_RTSP(L) == 4);
 		}
 
-		// IL MANQUE D'AUTRES EXEMPLES.
+        {
+		    Liste L = NULL;
+		    L = ajoute(0, L);
+
+		    //printf("NTAZ_It(L) = %d\n", NTAZ_It(L));
+		    //printf("NTAZ_Rec(L) = %d\n", NTAZ_Rec(L));
+		    //printf("NTAZ_RTSF(L) = %d\n", NTAZ_RTSF(L));
+		    //printf("NTAZ_RTSP(L) = %d\n", NTAZ_RTSP(L));
+		    CHECK(NTAZ_It(L) == 0);
+		    CHECK(NTAZ_Rec(L) == 0);
+		    CHECK(NTAZ_RTSF(L) == 0);
+		    CHECK(NTAZ_RTSP(L) == 0);
+        }
+
+        {
+		    Liste L = NULL;
+		    L = ajoute(1, L);
+		    L = ajoute(2, L);
+		    L = ajoute(3, L);
+		    L = ajoute(4, L);
+            L = ajoute(5, L);
+		    L = ajoute(6, L);
+		    L = ajoute(7, L);
+
+		    //printf("NTAZ_It(L) = %d\n", NTAZ_It(L));
+		    //printf("NTAZ_Rec(L) = %d\n", NTAZ_Rec(L));
+		    //printf("NTAZ_RTSF(L) = %d\n", NTAZ_RTSF(L));
+		    //printf("NTAZ_RTSP(L) = %d\n", NTAZ_RTSP(L));
+		    CHECK(NTAZ_It(L) == 7);
+		    CHECK(NTAZ_Rec(L) == 7);
+		    CHECK(NTAZ_RTSF(L) == 7);
+		    CHECK(NTAZ_RTSP(L) == 7);
+        }
 	}
+
+    if (true) {
+        // Tests ici pour les fonctions TuePos
+    }
+
+    if (true) {
+        // Tests ici pour la fonction TueRetroPos
+    }
 
     return 0;
 }
