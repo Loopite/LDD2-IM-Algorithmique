@@ -565,7 +565,43 @@ int main(void) {
 	}
 
     if (true) {
-        // Tests ici pour les fonctions TuePos
+        Liste LPos = NULL;
+        LPos = ajoute(0, LPos);
+		LPos = ajoute(6, LPos);
+		LPos = ajoute(0, LPos);
+		LPos = ajoute(4, LPos);
+		LPos = ajoute(5, LPos);
+		LPos = ajoute(9, LPos);
+		LPos = ajoute(1, LPos);
+
+
+        TuePosIt(&LPos);
+        affiche_rec(LPos);
+
+        Liste LPos2 = NULL;
+        LPos2 = ajoute(0, LPos2);
+		LPos2 = ajoute(6, LPos2);
+		LPos2 = ajoute(0, LPos2);
+		LPos2 = ajoute(4, LPos2);
+		LPos2 = ajoute(5, LPos2);
+		LPos2 = ajoute(9, LPos2);
+		LPos2 = ajoute(1, LPos2);
+
+
+        TuePosRec(&LPos2);
+        affiche_rec(LPos2);
+
+        Liste LPos3 = NULL;
+        LPos3 = ajoute(1, LPos3);
+		LPos3 = ajoute(6, LPos3);
+		LPos3 = ajoute(0, LPos3);
+		LPos3 = ajoute(4, LPos3);
+		LPos3 = ajoute(5, LPos3);
+		LPos3 = ajoute(9, LPos3);
+		LPos3 = ajoute(7, LPos3);
+
+        TueRetroPos(&LPos3);
+        affiche_rec(LPos3);
     }
 
     if (true) {
