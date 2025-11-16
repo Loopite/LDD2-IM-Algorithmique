@@ -292,14 +292,52 @@ int NTAZ_RTSP(Liste L) {
 /*                                          */
 /********************************************/
 
-void TuePosRec(Liste* L) {
+Liste TuePosRecAux(Liste L, int compteur) {
 
+    if (L == NULL) return NULL; // Cas de base
+    L->suite = TuePosRecAux(L->suite, compteur + 1); // On traite la suite de la liste d'abord puis la valeur actuelle
+
+    if (L->valeur == compteur) {        // Si la valeur est egale a la position, on supprime
+        Liste suite = L->suite;
+        free(L);
+        return suite;
+    } else {
+        return L;
+    }
+}
+
+
+void TuePosRec(Liste* L) {
+    *L = TuePosRecAux(*L, 1);
 }
 
 /*******/
 
 void TuePosIt(Liste* L) {
 
+    Liste actuel = *L;
+    Liste precedent = NULL;
+    int compteur = 1;
+
+    while (actuel != NULL) {                        // On s'arrete quand on a plus rien a traiter
+        if (actuel->valeur == compteur) {           // Si la valeur est egale a la position, on supprime
+
+            if (precedent == NULL) {                // Si on est au debut de la liste, on decale la tete de liste
+                *L = actuel->suite;
+                free(actuel);
+                actuel = *L;
+            } else {                                // On supprime l'element au milieu de liste
+                precedent->suite = actuel->suite;
+                free(actuel);
+                actuel = precedent->suite;
+            }
+
+        } else {                                    // Si la valeur n'est pas egale a la position, on passe simplement a l'element d'apres
+            precedent = actuel;
+            actuel = actuel->suite;
+        }
+        compteur++;
+    }
 }
 
 /********************************************/
@@ -308,8 +346,26 @@ void TuePosIt(Liste* L) {
 /*                                          */
 /********************************************/
 
-void TueRetroPos(Liste* L) {
+Liste TueRetroPosAUX(Liste L, int *compteur_retro) {
+    if (L == NULL) {
+        *compteur_retro = 0; // On compte les positions depuis la fin en remontant la recursivite
+        return NULL;
+    }
 
+    L->suite = TueRetroPosAUX(L->suite, compteur_retro);
+    *compteur_retro = *compteur_retro + 1;
+
+    if (L->valeur == *compteur_retro) {
+        Liste suite = L->suite;
+        free(L);
+        return suite;
+    } else {
+        return L;
+    }
+}
+void TueRetroPos(Liste* L) {
+    int compteur_retro = 0;
+    *L = TueRetroPosAUX(*L, &compteur_retro);
 }
 
 /*************************************************/
