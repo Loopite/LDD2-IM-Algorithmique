@@ -424,7 +424,7 @@ int* P_power2(int* P, int n, int k)  // Récursif, complexité environ k
 int* P_power3(int* P, int n, int k)  // Récursif, complexité environ log2(k)
 {
     if (k == 0) return P_identite(n);
-    if (k == 1) return P; // Cas trivial pour aller plus vite
+    if (k == 1) return P; // Cas trivial pour aller plus vite.
                           // On pourrait l'enlever, c.f la suite du code pour k = 1.
 
     int* half = P_power3(P, n, k / 2); // On divise par 2 pour l'effet log2.
@@ -435,10 +435,10 @@ int* P_power3(int* P, int n, int k)  // Récursif, complexité environ log2(k)
     if (k % 2 == 0) {
         return half_squared;
     } else {
-        int* result = malloc(n * sizeof(int));
-        P_Compose(P, half_squared, result, n);
+        int* res = malloc(n * sizeof(int));
+        P_Compose(P, half_squared, res, n);
         free(half_squared);
-        return result;
+        return res;
     }
 }
 
@@ -446,7 +446,7 @@ int* P_power3(int* P, int n, int k)  // Récursif, complexité environ log2(k)
 
 int* P_power4(int* P, int n, int k)  // Itératif, complexité environ log2(k)
 {
-    int* result = P_identite(n);
+    int* res = P_identite(n);
     int* power = malloc(n * sizeof(int));
     for (int i = 0; i < n; i++) power[i] = P[i];
 
@@ -454,23 +454,23 @@ int* P_power4(int* P, int n, int k)  // Itératif, complexité environ log2(k)
 
     while (k > 0) {
         if (k % 2 == 1) {
-            P_Compose(power, result, tmp, n);
-            // Remplacer result par tmp directement
-            for (int j = 0; j < n; j++) result[j] = tmp[j];
+            P_Compose(power, res, tmp, n);
+            // Remplacer res par tmp directement.
+            for (int j = 0; j < n; j++) res[j] = tmp[j];
         }
 
         k /= 2;
 
         if (k > 0) {
             P_Compose(power, power, tmp, n);
-            // Remplacer power par tmp directement
+            // Remplacer power par tmp directement.
             for (int j = 0; j < n; j++) power[j] = tmp[j];
         }
     }
 
     free(power);
     free(tmp);
-    return result;
+    return res;
 }
 
 /*************************************************/
