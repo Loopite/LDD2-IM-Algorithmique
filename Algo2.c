@@ -73,9 +73,7 @@ Liste ajoute(int x, Liste l) {
 void empile(int x, Liste* L) { *L = ajoute(x, *L); }
 
 /*****************************/
-/*                           */
 /*       Affiche             */
-/*                           */
 /*****************************/
 
 void affiche_rec(Liste l) {
