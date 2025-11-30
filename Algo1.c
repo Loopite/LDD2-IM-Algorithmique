@@ -338,7 +338,7 @@ int* P_identite(int n) {
     // En effet, si l'allocation échoue, c'est déjà signe de problème sur la
     // machine.
 
-    for (int i = 0; i < n; i++) T[i] = i;
+    for (int i = 0; i != n; i++) T[i] = i;
     return T;
 }
 
@@ -346,44 +346,44 @@ int* P_identite(int n) {
 
 int* P_Inverse(int* P, int n) {
     int* T = (int*)malloc(n * sizeof(int));
-    for (int i = 0; i < n; i++) T[P[i]] = i;
+    for (int i = 0; i != n; i++) T[P[i]] = i;
     return T;
 }
 
 /*************************************************/
 
-void P_Compose(int* P, int* Q, int* R, int n)  // écrit PoQ dans R
+void P_Compose(int* P, int* Q, int* R, int n)  // Ecrit P * Q dans R.
 {
-    for (int i = 0; i < n; i++) R[i] = P[Q[i]];
+    for (int i = 0; i != n; i++) R[i] = P[Q[i]];
 }
 
 /*************************************************/
 
 bool P_Verifie(int* P, int n) {
-    // Préparation de la vérification avec le déjà vu.
-    bool* deja_vu = (bool*)malloc(n * sizeof(bool));
-    for (int i = 0; i < n; i++) {
-        deja_vu[i] = false;
+    // On peut en fait utiliser le principe d'un "déjà-vu".
+    bool* checked = (bool*)malloc(n * sizeof(bool));
+    for (int i = 0; i != n; i++) {
+        checked[i] = false;
     }
 
     // Vérification linéaire des éléments.
-    for (int i = 0; i < n; i++) {
+    for (int i = 0; i != n; i++) {
         if (P[i] < 0 ||
             P[i] >=
                 n) {  // On traite le cas où on est hors intervalle [0, n-1].
-            free(deja_vu);
+            free(checked);
             return false;
         }
 
-        if (deja_vu[P[i]]) {  // Un déjà vu s'est produit.
-            free(deja_vu);
+        if (checked[P[i]]) {  // Un déjà vu s'est produit.
+            free(checked);
             return false;
         }
 
-        deja_vu[P[i]] = true;
+        checked[P[i]] = true;
     }
 
-    free(deja_vu);
+    free(checked);
     return true;
 }
 
@@ -394,9 +394,10 @@ int* P_power1(int* P, int n, int k)  // Itératif, complexité environ k
     int* res = P_identite(n);
     int* tmp = malloc(n * sizeof(int));
 
-    for (int i = 0; i < k; i++) {
+    for (int i = 0; i != k; i++) {
         P_Compose(res, P, tmp, n);
-        for (int j = 0; j < n; j++) res[j] = tmp[j];
+        for (int j = 0; j != n; j++)
+            res[j] = tmp[j];  // Mise à jour du résultat final.
     }
 
     free(tmp);
@@ -410,7 +411,7 @@ int* P_power2(int* P, int n, int k)  // Récursif, complexité environ k
     if (k == 0) return P_identite(n);
 
     // Calcul récursif : P^k = P^(k-1) * P d'après la consigne.
-    int* res = P_power2(P, n, k - 1); // Calcul de P^(k-1)
+    int* res = P_power2(P, n, k - 1);  // Calcul de P^(k-1)
     int* tmp = malloc(n * sizeof(int));
     P_Compose(res, P, tmp, n);
 
@@ -419,27 +420,29 @@ int* P_power2(int* P, int n, int k)  // Récursif, complexité environ k
 }
 
 /**********************/
-// pourquoi le cas spécial k==1 ? et pourquoi n'est-elle pas que `return P` ? OK.
-// un peu étrange de calculer `P_k2 = P_power3(P, n, k / 2)` premièrement et « corriger » après si k est impair: A VOIR.
 int* P_power3(int* P, int n, int k)  // Récursif, complexité environ log2(k)
 {
     if (k == 0) return P_identite(n);
-    if (k == 1) return P; // Cas trivial pour aller plus vite.
-                          // On pourrait l'enlever, c.f la suite du code pour k = 1.
-
-    int* half = P_power3(P, n, k / 2); // On divise par 2 pour l'effet log2.
-    int* half_squared = malloc(n * sizeof(int));
-    P_Compose(half, half, half_squared, n);
-    free(half);
-
-    if (k % 2 == 0) {
-        return half_squared;
-    } else {
+    if (k == 1) {
         int* res = malloc(n * sizeof(int));
-        P_Compose(P, half_squared, res, n);
-        free(half_squared);
+        for (int i = 0; i != n; i++) res[i] = P[i];
         return res;
     }
+
+    if (k % 2 == 0) {  // k est pair : P^k = (P^(k/2)) * (P^(k/2))
+        int* half = P_power3(P, n, k / 2);  // Pour l'effet log2.
+        int* res = malloc(n * sizeof(int));
+        P_Compose(half, half, res, n);
+        free(half);
+        return res;
+    }
+
+    // k est impair : P^k = P * P^(k-1)
+    int* prev = P_power3(P, n, k - 1);
+    int* res = malloc(n * sizeof(int));
+    P_Compose(P, prev, res, n);  // res = P * P^(k-1)
+    free(prev);
+    return res;
 }
 
 /**********************/
@@ -447,28 +450,31 @@ int* P_power3(int* P, int n, int k)  // Récursif, complexité environ log2(k)
 int* P_power4(int* P, int n, int k)  // Itératif, complexité environ log2(k)
 {
     int* res = P_identite(n);
-    int* power = malloc(n * sizeof(int));
-    for (int i = 0; i < n; i++) power[i] = P[i];
+    if (k == 0) return res;
 
+    int* base = malloc(n * sizeof(int));
+    for (int i = 0; i != n; i++) base[i] = P[i];
     int* tmp = malloc(n * sizeof(int));
 
     while (k > 0) {
         if (k % 2 == 1) {
-            P_Compose(power, res, tmp, n);
-            // Remplacer res par tmp directement.
-            for (int j = 0; j < n; j++) res[j] = tmp[j];
+            P_Compose(base, res, tmp, n);  // tmp = base * res.
+            int* swap = res;
+            res = tmp;
+            tmp = swap;
         }
 
-        k /= 2;
+        k /= 2;  // Pour l'effet log2.
 
         if (k > 0) {
-            P_Compose(power, power, tmp, n);
-            // Remplacer power par tmp directement.
-            for (int j = 0; j < n; j++) power[j] = tmp[j];
+            P_Compose(base, base, tmp, n);  // tmp = base * base.
+            int* swap = base;
+            base = tmp;
+            tmp = swap;
         }
     }
 
-    free(power);
+    free(base);
     free(tmp);
     return res;
 }
@@ -697,10 +703,12 @@ int main(void) {
             P_Affiche(P_power(tmp, dim, 2, v), dim);
             P_Affiche(P_power(tmp, dim, 3, v), dim);
             P_Affiche(P_power(tmp, dim, dim, v), dim);
-            P_Affiche(P_power(tmp, dim, fact1(dim), v), dim); // REMARQUE: peut causer des crash
-                                                              // si la dimension est trop grande. Par exemple pour dim=10,
-                                                              // il y a 10! = 3 628 800 appels récursifs. Pour dim=9 ça
-                                                              // plante aussi. Pour dim<=8 c'est ok.
+            P_Affiche(
+                P_power(tmp, dim, fact1(dim), v),
+                dim);  // REMARQUE: peut causer des crash
+                       // si la dimension est trop grande. Par exemple pour
+                       // dim=10, il y a 10! = 3 628 800 appels récursifs. Pour
+                       // dim=9 ça plante aussi. Pour dim<=8 c'est ok.
         }
 
         free(tmp1);
@@ -711,9 +719,10 @@ int main(void) {
         printf("\n");
     }
 
-    // BONUS: pour tester la fameuse remarque sur les crash lié au nombre d'appels récursifs.
+    // BONUS: pour tester la fameuse remarque sur les crash lié au nombre
+    // d'appels récursifs.
     if (false) {
-        int max_depth = 362880; // 9!
+        int max_depth = 362880;  // 9!
         recursive(max_depth);
     }
 
