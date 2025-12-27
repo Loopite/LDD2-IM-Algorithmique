@@ -214,6 +214,25 @@ double QuotaNoir(image img) {
     return currentQuota;
 }
 
+image Copie(image img) {
+	if (img == NULL)
+		return Blk();
+
+	if (img->blanc)
+		return Wht();
+
+	return Cut(Copie(img->Im[0]), Copie(img->Im[1]), Copie(img->Im[2]), Copie(img->Im[3]));
+}
+
+image DiagonalAux(int p, int currentp) {
+	if (currentp == p) return NULL;
+	return Cut(DiagonalAux(p, currentp + 1), Wht(), Wht(), DiagonalAux(p, currentp + 1));
+}
+
+image Diagonal(int p) { // On suppose p >= 0.
+	return DiagonalAux(p, 0);
+}
+
 /*************************************************/
 /*                                               */
 /*           Main                                */
@@ -253,6 +272,12 @@ int main(void) {
         printf("Le dessin est-il blanc? %s\n", DessinBlanc(img) == true ? "OUI" : "NON");
         printf("Le quota de noir est: %f\n", QuotaNoir(img));
     }
+
+	// Question 8
+	if (true) {
+		image img = Diagonal(3); // Comme dans l'énoncé.
+		Affiche(img);
+	}
 
     return 0;
 }
