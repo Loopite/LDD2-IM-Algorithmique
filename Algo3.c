@@ -233,6 +233,26 @@ image Diagonal(int p) { // On suppose p >= 0.
 	return DiagonalAux(p, 0);
 }
 
+bool Incluse(image img1, image img2){
+    if (img1 == NULL) return img2 == NULL;
+    if (img1->blanc) return true;
+    if (img2 == NULL || img2->blanc) {
+        return Incluse(img1->Im[0], img2) 
+        && Incluse(img1->Im[1], img2) 
+        && Incluse(img1->Im[2], img2) 
+        && Incluse(img1->Im[3], img2);
+    }
+    else {
+        return Incluse(img1->Im[0], img2->Im[0]) 
+        && Incluse(img1->Im[1], img2->Im[1]) 
+        && Incluse(img1->Im[2], img2->Im[2]) 
+        && Incluse(img1->Im[3], img2->Im[3]);
+    }
+}
+
+
+
+
 /*************************************************/
 /*                                               */
 /*           Main                                */
