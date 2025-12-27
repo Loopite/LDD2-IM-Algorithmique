@@ -233,6 +233,40 @@ image Diagonal(int p) { // On suppose p >= 0.
 	return DiagonalAux(p, 0);
 }
 
+void SimplifieProfPAux(image img, int p, int prof){
+    if (img == NULL || img->blanc) return;
+    if (prof < p - 1) {
+        SimpliefieProfPAux(img->Im[0], p, prof+1);
+        SimpliefieProfPAux(img->Im[1], p, prof+1);
+        SimpliefieProfPAux(img->Im[2], p, prof+1);
+        SimpliefieProfPAux(img->Im[3], p, prof+1);
+        return;
+    }
+    else {
+        for (int i = 0; i < 4; i++) {
+
+            if (DessinBlanc(img->Im[i])) {
+                image t = img->Im[i];
+                img->Im[i] = Wht();
+                free(t);
+
+            } else if (DessinNoir(img->Im[i])) {
+                image t = img->Im[i];
+                img->Im[i] = Blk();
+                free(t);
+            }
+        }
+        return;
+    }
+}
+
+void SimplifieProfP(image img, int p){
+    return SimplifieProfPAux(img, p, 0);
+}
+
+
+
+
 bool Incluse(image img1, image img2){
     if (img1 == NULL) return img2 == NULL;
     if (img1->blanc) return true;
