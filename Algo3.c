@@ -236,10 +236,10 @@ image Diagonal(int p) { // On suppose p >= 0.
 void SimplifieProfPAux(image img, int p, int prof){
     if (img == NULL || img->blanc) return;
     if (prof < p - 1) {
-        SimpliefieProfPAux(img->Im[0], p, prof+1);
-        SimpliefieProfPAux(img->Im[1], p, prof+1);
-        SimpliefieProfPAux(img->Im[2], p, prof+1);
-        SimpliefieProfPAux(img->Im[3], p, prof+1);
+        SimplifieProfPAux(img->Im[0], p, prof+1);
+        SimplifieProfPAux(img->Im[1], p, prof+1);
+        SimplifieProfPAux(img->Im[2], p, prof+1);
+        SimplifieProfPAux(img->Im[3], p, prof+1);
         return;
     }
     else {
@@ -284,7 +284,22 @@ bool Incluse(image img1, image img2){
     }
 }
 
-
+int CompteSousImagesGrises(image img){
+    if (img == NULL || img->blanc) return 0;
+    float TauxNoir = QuotaNoir(img);
+    if (TauxNoir >= 1/3 && 2/3 >= TauxNoir) {
+        return 1 + CompteSousImagesGrises(img->Im[0]) 
+                 + CompteSousImagesGrises(img->Im[1]) 
+                 + CompteSousImagesGrises(img->Im[2]) 
+                 + CompteSousImagesGrises(img->Im[3]);
+    }
+    else {
+        return CompteSousImagesGrises(img->Im[0]) 
+                 + CompteSousImagesGrises(img->Im[1]) 
+                 + CompteSousImagesGrises(img->Im[2]) 
+                 + CompteSousImagesGrises(img->Im[3]);
+    }
+}
 
 
 /*************************************************/
